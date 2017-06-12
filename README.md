@@ -8,24 +8,50 @@ https://heatnodes.org/?page_id=244
 
   - [Install Docker](https://docs.docker.com/engine/installation/)
 
+## Quickstart
 
-## Building image
+```
+# Create hallmark
+docker run --rm jussil/fimk /hallmark.sh "dog cat sheep .." 911.911.911.911
+
+# Run server
+docker run -d --name fimk \
+  -p 7884:7884 \
+  -p 7886:7886 \
+  -e "nxt__maxNumberOfConnectedPublicPeers=500" \
+  -e "nxt__myPlatform=abc123" \
+  -e "nxt__myAddress=911.911.911.911" \
+  -e "nxt__myHallmark=ASDF123" \
+  jussil/fimk
+
+# Check block height
+docker logs fimk
+
+# Start forging when on full height
+docker exec fimk /forge.sh "your secret passphrase"
+```
+
+## Usage
+
+### Building image
 
 Check docker hub releases for exact image versions: https://hub.docker.com/r/jussil/fimk/
 
   - Run in the repository dir `docker build -t jussil/fimk .`
 
-
-## Creating hallmark
+### Creating hallmark
 
 In order to participate in lottery you need hallmark. To create it, run the container script `/hallmark.sh "<wallet secret phrase>" <PUBLIC IP/HOST>`, ie:
 ```
-docker run --rm /hallmark.sh "dog cat sheep .." 911.911.911.911
+# If server is not running
+docker run --rm jussil/fimk /hallmark.sh "dog cat sheep .." 911.911.911.911
+# If server is running
+docker exec fimk /hallmark.sh "dog cat sheep .." 911.911.911.911
 ```
 
 This will run the server inside the container and do the API request locally to acquire hallmark.
 
-## Run server
+### Run server
 
 Run the server in detached mode.
 ```
